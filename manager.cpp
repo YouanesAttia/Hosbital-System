@@ -38,8 +38,8 @@ void Manager::loadInitialData()
                         {
                                 QString id = fields[0].trimmed();
                                 QString day = fields[1].trimmed();
-                                QTime start = QTime::fromString(fields[2].trimmed(), "hh:mm");
-                                QTime end = QTime::fromString(fields[3].trimmed(), "hh:mm");
+                                QTime start = QTime::fromString(fields[2].trimmed(), "h:mm");
+                                QTime end = QTime::fromString(fields[3].trimmed(), "h:mm");
                                 availabilities.append(Availability(id, day, start, end));
                         }
                 }
@@ -90,8 +90,8 @@ void Manager::saveAppointments()
                         out << app.getDoctorID() << ","
                             << app.getPatientID() << ","
                             << app.getDate().toString(Qt::ISODate) << ","
-                            << app.getTimeSlot().getStartTime().toString("hh:mm") << ","
-                            << app.getTimeSlot().getEndTime().toString("hh:mm") << "\n";
+                            << app.getTimeSlot().getStartTime().toString("h:mm") << ","
+                            << app.getTimeSlot().getEndTime().toString("h:mm") << "\n";
                 }
                 file.close();
         }
@@ -117,8 +117,8 @@ void Manager::loadAppointments()
                                 QString dID = a[0].trimmed();
                                 QString pID = a[1].trimmed();
                                 QDate dt = QDate::fromString(a[2].trimmed(), Qt::ISODate);
-                                QTime start = QTime::fromString(a[3].trimmed(), "hh:mm");
-                                QTime end = QTime::fromString(a[4].trimmed(), "hh:mm");
+                                QTime start = QTime::fromString(a[3].trimmed(), "h:mm");
+                                QTime end = QTime::fromString(a[4].trimmed(), "h:mm");
 
                                 TimeSlot slot(start, end);
                                 appointments.append(Appointment(dID, pID, dt, slot));
@@ -127,5 +127,25 @@ void Manager::loadAppointments()
                 }
                 file.close();
         }
+}
+
+QList<TimeSlot> Manager::generate20MinSlots(QString doctorID, QDate date)
+{
+        QList<TimeSlot> availSlots;
+        QString dayOfWeek = date.toString("dddd");
+
+        for(auto &avail : availabilities)
+        {
+                if(avail.getDoctorID() == doctorID && avail.getDayOfWeek() == dayOfWeek)
+                {
+                        QTime start = avail.getStartTime();
+                        while(start.addSecs(1200) <= avail.getEndTime())
+                        {
+                                availSlots.append(TimeSlot(start, start.addSecs(1200)));
+                                start = start.addSecs(1200);
+                        }
+                }
+        }
+        return availSlots;
 }
 
