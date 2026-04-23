@@ -149,3 +149,25 @@ QList<TimeSlot> Manager::generate20MinSlots(QString doctorID, QDate date)
         return availSlots;
 }
 
+bool Manager::isValidSlot(QString doctorID, QDate date, TimeSlot slot)
+{
+	QList<TimeSlot> validSlots = generate20MinSlots(doctorID, date);
+	for (auto &a : validSlots)
+	{
+		if(a.getStartTime() == slot.getStartTime())
+			return true;
+	}
+	return false;
+}
+
+bool Manager::hasPatientConflict(QString patientID, QDate date, TimeSlot slot)
+{
+	for (auto &a: appointments)
+	{
+		if(a.getPatientID() == patientID && a.getDate() == date && a.getStartTime() == slot.getStartTime())
+		{
+			return true;
+		}
+	}
+	return false;
+}
