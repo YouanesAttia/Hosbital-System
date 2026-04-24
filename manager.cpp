@@ -160,6 +160,7 @@ bool Manager::isValidSlot(QString doctorID, QDate date, TimeSlot slot)
 	return false;
 }
 
+//A patient cannot have two appointments at the same time
 bool Manager::hasPatientConflict(QString patientID, QDate date, TimeSlot slot)
 {
 	for (auto &a: appointments)
@@ -171,3 +172,31 @@ bool Manager::hasPatientConflict(QString patientID, QDate date, TimeSlot slot)
 	}
 	return false;
 }
+
+//  A doctor cannot have two appointments at the same time
+bool Manager::hasDoctorConflict(QString doctorID, QDate date, TimeSlot slot)
+{
+	for (&a : appointments)
+	{
+		if(a.getDoctorID() == doctorID && a.getDate() == date && a.getStartTime() == slot.getStartTime())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+//A single patient cannot have more than two appointments per calendar day
+bool Manager::exceedsDailyLimit(QString patientID, QDate date)
+{
+	int count = 0;
+	for (auto &a : appointments
+	{
+		if(a.getPatientID() == patientID && a.getDate() == date)
+		{
+			count ++;
+		}
+	}
+	return (count > 2);
+}
+
