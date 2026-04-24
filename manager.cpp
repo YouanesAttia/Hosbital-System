@@ -200,3 +200,41 @@ bool Manager::exceedsDailyLimit(QString patientID, QDate date)
 	return (count > 2);
 }
 
+//Reservations must be made at least 1 hour prior to the slot’s start time
+bool Manager::isWithinBufferTime(QDate date, TimeSlot slot)
+{
+	QDateTime appointmentStartTime(date, slot.getStartTime());
+	QDateTime currentTime = QDateTime::currentDateTime();
+	return currentTime.addSecs(3600) <= appointmentStartTime;
+}
+
+//The appointment can be made only within a 2-month period
+bool Manager::isWithinDateLimit(QDate date)
+{
+	QDate today = QDate::currentDate();
+	QDate maxDate = today.addMonths(2);
+	return (date >= today && date <=maxDate);
+}
+
+//Combine all logic rules
+bool Manager::validateAppointment(QString patientID, QString doctorID, QDate date, TimeSlot slot) 
+{
+	if (!isWithinDateLimit(date)) return false;
+	if (!isWithinBufferTime(date, slot)) return false;
+	if (!isValidSlot(doctorID, date, slot)) return false;
+	if (exceedsDailyLimit(patientID, date)) return false;
+	if (hasDoctorConflict(doctorID, date, slot)) return false;
+	if (hasPatientConflict(patientID, date, slot)) return false;
+	return true;
+}
+
+bool Manager::addAppointment(Appointment a)
+{
+	if(validateAppointment(a.getPatientID(), a.getDoctorID(), a.getDate(), a.getTimeSlot()))
+	{
+		appointments.append(a);
+		saveAppointments();
+		return true;
+	}
+	return false;
+}
