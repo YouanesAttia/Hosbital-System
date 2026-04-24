@@ -238,3 +238,66 @@ bool Manager::addAppointment(Appointment a)
 	}
 	return false;
 }
+
+bool Manager::isNationalIDUnique(QString nationalID)
+{
+	for (auto &a : patients)
+	{
+		if (a.getNationalID() == nationalID)
+			return false;
+	}
+	return true;
+}
+
+QList<Doctor> Manager::filterDoctorsByName(QString name)
+{
+	QList<Doctor> results;
+	for (auto &d : doctors)
+	{
+		if(d.getName().contains(name, Qt::CaseInsensitive))
+			results.append(d);
+	}
+	return results;
+}
+
+QList<Doctor> Manager::filterDoctorsByDepartment(QString dept)
+{
+	QList<Doctor> results;
+	for (auto &d : doctors)
+	{
+		if(d.getDepartment().contains(dept, Qt::CaseInsensitive))
+			results.append(d);
+	}
+	return results;
+}
+
+bool Manager::addPatient(Patient p)
+{
+	if(isNationalIDUnique(p.getNationalID()))
+	{
+		patients.append(p);
+		savePatientData();
+		return true;
+	}
+	return false;
+}
+
+Doctor* Manager::getDoctorByID(QString id)
+{
+	for (int i = 0; i < doctors.size(); ++i)
+	{
+		if (doctors[i].getID() == id)
+			return &doctors[i];
+	}
+	return nullptr;
+}
+
+Patient* Manager::getPatientByID(QString id) 
+{
+        for (int i = 0; i < patients.size(); ++i) 
+        {
+                if (patients[i].getNationalID() == id)
+                        return &patients[i];
+        }
+        return nullptr;
+}
