@@ -175,6 +175,7 @@ bool Manager::hasPatientConflict(QString patientID, QDate date, TimeSlot slot)
     return false;
 }
 
+
 bool Manager::hasDoctorConflict(QString doctorID, QDate date, TimeSlot slot)
 {
     for (auto &a : appointments)
@@ -187,6 +188,7 @@ bool Manager::hasDoctorConflict(QString doctorID, QDate date, TimeSlot slot)
     return false;
 }
 
+// A patient can't have more than two appointments in the same day
 bool Manager::exceedsDailyLimit(QString patientID, QDate date)
 {
     int count = 0;
@@ -200,6 +202,7 @@ bool Manager::exceedsDailyLimit(QString patientID, QDate date)
     return (count >= 2);
 }
 
+// The appointment must be reserved at least one hour from the current time
 bool Manager::isWithinBufferTime(QDate date, TimeSlot slot)
 {
     QDateTime appointmentStartTime(date, slot.getStartTime());
@@ -207,7 +210,7 @@ bool Manager::isWithinBufferTime(QDate date, TimeSlot slot)
     return currentTime.addSecs(3600) <= appointmentStartTime;
 }
 
-
+//Ensure that the appointment is reserved max after 2 months.
 bool Manager::isWithinDateLimit(QDate date)
 {
     QDate today = QDate::currentDate();
