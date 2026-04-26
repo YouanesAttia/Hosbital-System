@@ -15,4 +15,7 @@ add_executable(HospitalSystem
 )
 
 target_link_libraries(HospitalSystem PRIVATE Qt6::Widgets)
-
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/doctors.csv" DESTINATION 
+"${CMAKE_CURRENT_BINARY_DIR}")
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/availability.csv" DESTINATION 
+"${CMAKE_CURRENT_BINARY_DIR}")
