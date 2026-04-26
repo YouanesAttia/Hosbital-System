@@ -21,7 +21,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     QWidget *centralWidget = new QWidget(this);
     QVBoxLayout *mainLayout = new QVBoxLayout(centralWidget);
 
-    // --- FILTER SECTION ---
     QHBoxLayout *filterLayout = new QHBoxLayout();
 
     nameFilter = new QLineEdit();
@@ -43,12 +42,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     filterLayout->addWidget(datePicker);
     filterLayout->addWidget(filterBtn);
 
-    // --- TIMETABLE SECTION ---
     table = new QTableWidget(0, 5);
     table->setHorizontalHeaderLabels({"Time", "Doctor", "Department", "Patient / Status", "Action"});
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-    // --- ACTION BUTTONS ---
     QHBoxLayout *actionLayout = new QHBoxLayout();
     QPushButton *regBtn = new QPushButton("Register New Patient Profile");
     QPushButton *updateMobileBtn = new QPushButton("Update Patient Mobile Number");
@@ -60,7 +57,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     mainLayout->addLayout(actionLayout);
     setCentralWidget(centralWidget);
 
-    // --- CONNECTIONS ---
     connect(filterBtn, &QPushButton::clicked, this, &MainWindow::displayTimetable);
     connect(regBtn, &QPushButton::clicked, this, &MainWindow::openPatientRegistration);
 
@@ -97,11 +93,9 @@ void MainWindow::displayTimetable() {
     QString nFilter = nameFilter->text().trimmed();
     QString dFilter = deptFilter->text().trimmed();
 
-    // Get doctors matching Name filter
     QList<Doctor> doctorsToShow = manager->filterDoctorsByName(nFilter);
 
     for (const auto &doc : doctorsToShow) {
-        // Apply Department Filter manually
         if (!dFilter.isEmpty() && !doc.getDepartment().contains(dFilter, Qt::CaseInsensitive)) {
             continue;
         }
@@ -183,7 +177,6 @@ void MainWindow::openPatientRegistration() {
     form.addRow(saveBtn);
 
     connect(saveBtn, &QPushButton::clicked, [&]() {
-        // Enforce Required Fields
         if(nameEdit->text().trimmed().isEmpty() ||
             idEdit->text().trimmed().isEmpty() ||
             mobileEdit->text().trimmed().isEmpty()) {
@@ -202,7 +195,7 @@ void MainWindow::openPatientRegistration() {
         }
     });
 
-    diag.exec(); // Don't forget this!
+    diag.exec();
 }
 
 void MainWindow::refreshTimetable() { displayTimetable(); }
